@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Killer Bean Demo</title>
+<style>
+  
+  body {
+    margin: 0;
+    overflow: hidden;
+    background: #222;
+  }
+  #gameCanvas {
+    background: #444;
+    display: block;
+    margin: 0 auto;
+  }
+  .bullet {
+    position: absolute;
+    width: 10px;
+    height: 5px;
+    background: yellow;
+    border-radius: 2px;
+  }
+  select{
+    background-color: rgb(0, 15, 33);
+  }
+</style>
+<html>
+  
+
+  <select id="sort" class="chip" style="border-radius:12px">
+     <option value="new"><blockquote><strong>CONTROLS</strong></blockquote></option>
+            <option value="new">PRESS CTR+R TO REPLAY IF U FAIL</option>
+            <option value="old"><blockquote><strong>USE SPACE BAR TO SHOOT</strong></blockquote></option>
+            <option value="az"><blockquote><strong>USE ARROW KEYS TO MOVE</strong></blockquote></option>
+            <option value="za"><blockquote><strong>USE UP ARROW TO JUMP</strong>  </blockquote> </option>
+            <option value="size"><blockquote><strong>WARNING:IF YOUR ENEMY TOUCH YOU, YOU HAVE FAILED</strong></blockquote></option>
+          </select>
+      
+</html>
+</head>
+<body>
+<canvas id="gameCanvas" width="800" height="400"></canvas>
+<script>
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+// Game variables
+let keys = {};
+let bullets = [];
+let enemies = [];
+let platforms = [];
+let stairs = [];
+let gravity = 0.7;
+let score = 0;
+let level = 1;
+// Killer Bean character
+const bean = {
+  x: 50,
+  y: 300,
+  width: 50,
+  height: 50,
+  color: 'red',
+  dx: 0,
+  dy: 0,
+  speed: 5,
+  jumping: false
+};
+// Platforms
+platforms = [
+  { x: 100, y: 350, width: 200, height: 20 },
+  { x: 400, y: 300, width: 150, height: 20 },
+  { x: 650, y: 250, width: 100, height: 20 },
+  { x: 0, y: 380, width: 800, height: 20 } // ground
+];
+// Stairs
+stairs = [
+  { x: 500, y: 350, width: 50, height: 50, incline: -1 } // example stair
+];
+// Listen to key presses
+document.addEventListener('keydown', e => { keys[e.key] = true; });
+document.addEventListener('keyup', e => { keys[e.key] = false; });
+// Shoot bullets
+function shoot() {
+  bullets.push({ x: bean.x + bean.width, y: bean.y + bean.height/2 - 2, speed: 10 });
+}
+// Create enemies
+function createEnemy() {
+  let enemySpeed = level * 2; // increase speed with level
+  enemies.push({ x: canvas.width, y: canvas.height - 50, width: 30, height: 30, speed: enemySpeed });
+}
+// Update game
+function update() {
+  // Movement
+  if (keys['ArrowRight']) bean.dx = bean.speed;
+  else if (keys['ArrowLeft']) bean.dx = -bean.speed;
+  else bean.dx = 0;
+  // Jump
+  if (keys['ArrowUp'] && !bean.jumping) {
+    bean.dy = -12;
+    bean.jumping = true;
+  }
+  // Apply gravity
+  bean.dy += gravity;
+  bean.y += bean.dy;
+  bean.x += bean.dx;
+  // Collision with platforms
+  for (let platform of platforms) {
+    if (bean.x + bean.width > platform.x &&
+        bean.x < platform.x + platform.width &&
+        bean.y + bean.height > platform.y &&
+        bean.y < platform.y + platform.height) {
+      bean.y = platform.y - bean.height;
+      bean.dy = 0;
+      bean.jumping = false;
+    }
+  }
+  // Update bullets
+  bullets.forEach((b, i) => {
+    b.x += b.speed;
+    if (b.x > canvas.width) bullets.splice(i, 1);
+  });
+  // Update enemies
+  enemies.forEach((e, i) => {
+    e.x -= e.speed;
+    // Climb stairs
+    for (let stair of stairs) {
+      if (e.x + e.width > stair.x &&
+          e.x < stair.x + stair.width &&
+          e.y + e.height >= stair.y &&
+          e.y <= stair.y + stair.height) {
+        e.y += stair.incline * e.speed; // move up/down stair
+      }
+    }
+    if (e.x < -e.width) enemies.splice(i, 1);
+    // Collision with bean
+    if (bean.x + bean.width > e.x &&
+        bean.x < e.x + e.width &&
+        bean.y + bean.height > e.y &&
+        bean.y < e.y + e.height) {
+      // Game over
+      alert('Game Over! Your score: ' + score + ', Level: ' + level);
+      location.reload();
+    }
+    // Collision with bullets
+    bullets.forEach((b, j) => {
+      if (b.x + 10 > e.x &&
+          b.x < e.x + e.width &&
+          b.y + 5 > e.y &&
+          b.y < e.y + e.height) {
+        bullets.splice(j, 1);
+        enemies.splice(i, 1);
+        score++;
+      }
+    });
+  });
+  // Create new enemies
+  if (Math.random() < 0.05 * level) createEnemy(); // more enemies with level
+  // Level up
+  if (score >= level * 10) {
+    level++;
+    score = 0; // reset score for next level
+  }
+}
+// Draw game
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  // Draw platforms
+  ctx.fillStyle = 'green';
+  platforms.forEach(p => ctx.fillRect(p.x, p.y, p.width, p.height));
+  // Draw stairs
+  ctx.fillStyle = 'brown';
+  stairs.forEach(s => ctx.fillRect(s.x, s.y, s.width, s.height));
+  // Draw Killer Bean
+  ctx.fillStyle = bean.color;
+  ctx.fillRect(bean.x, bean.y, bean.width, bean.height);
+  // Draw bullets
+  ctx.fillStyle = 'yellow';
+  bullets.forEach(b => ctx.fillRect(b.x, b.y, 10, 5));
+  // Draw enemies
+  ctx.fillStyle = 'blue';
+  enemies.forEach(e => ctx.fillRect(e.x, e.y, e.width, e.height));
+  // Draw score and level
+  ctx.font = '24px Arial';
+  ctx.fillStyle = 'white';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'top';
+  ctx.fillText('Score: ' + score + ', Level: ' + level, 10, 10);
+}
+// Game loop
+function loop() {
+  update();
+  draw();
+  requestAnimationFrame(loop);
+}
+// Shoot when space is pressed
+document.addEventListener('keydown', e => {
+  if (e.code === 'Space') shoot();
+});
+loop();
+</script>    
+</body>
+</html>

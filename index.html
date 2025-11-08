@@ -1,0 +1,878 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MovieHub - Download Movies & Pictures</title>
+  <style>
+    :root {
+      --primary: #e50914;
+      --primary-dark: #b2070f;
+      --dark: #141414;
+      --dark-light: #1f1f1f;
+      --light: #ffffff;
+      --gray: #8c8c8c;
+      --gray-dark: #2a2a2a;
+      --accent: #00a8ff;
+      --success: #46d369;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--dark);
+      color: var(--light);
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    /* Header Styles */
+    header {
+      background: linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 100%);
+      padding: 20px 0;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background: linear-gradient(135deg, var(--primary), var(--accent));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: white;
+    }
+
+    .logo-text {
+      font-size: 24px;
+      font-weight: 700;
+      background: linear-gradient(to right, var(--primary), var(--accent));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 25px;
+    }
+
+    .nav-links a {
+      color: var(--light);
+      text-decoration: none;
+      font-weight: 500;
+      transition: color 0.3s;
+      position: relative;
+    }
+
+    .nav-links a:hover {
+      color: var(--primary);
+    }
+
+    .nav-links a.active::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background-color: var(--primary);
+    }
+
+    .search-box {
+      display: flex;
+      background: var(--dark-light);
+      border-radius: 25px;
+      overflow: hidden;
+      padding: 5px 15px;
+      align-items: center;
+    }
+
+    .search-box input {
+      background: transparent;
+      border: none;
+      color: var(--light);
+      padding: 8px;
+      width: 200px;
+      outline: none;
+    }
+
+    .search-box button {
+      background: transparent;
+      border: none;
+      color: var(--gray);
+      cursor: pointer;
+    }
+
+    /* Hero Section */
+    .hero {
+      background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), 
+                  url('https://images.unsplash.com/photo-1489599809505-fc6acc43c71f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80');
+      background-size: cover;
+      background-position: center;
+      padding: 80px 0;
+      text-align: center;
+      border-radius: 0 0 20px 20px;
+      margin-bottom: 40px;
+    }
+
+    .hero h1 {
+      font-size: 48px;
+      margin-bottom: 20px;
+      background: linear-gradient(to right, var(--light), var(--primary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .hero p {
+      font-size: 20px;
+      max-width: 700px;
+      margin: 0 auto 30px;
+      color: var(--gray);
+    }
+
+    /* Main Content */
+    .main-content {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 30px;
+      margin-bottom: 50px;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      background: var(--dark-light);
+      border-radius: 12px;
+      padding: 20px;
+      height: fit-content;
+    }
+
+    .sidebar-section {
+      margin-bottom: 30px;
+    }
+
+    .sidebar-section h3 {
+      font-size: 18px;
+      margin-bottom: 15px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--gray-dark);
+      color: var(--primary);
+    }
+
+    .category-list {
+      list-style: none;
+    }
+
+    .category-list li {
+      margin-bottom: 12px;
+    }
+
+    .category-list a {
+      color: var(--light);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      transition: color 0.3s;
+    }
+
+    .category-list a:hover {
+      color: var(--primary);
+    }
+
+    .category-icon {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--gray-dark);
+      border-radius: 4px;
+    }
+
+    /* Movie Grid */
+    .section-title {
+      font-size: 24px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .section-title::after {
+      content: '';
+      flex-grow: 1;
+      height: 1px;
+      background: var(--gray-dark);
+    }
+
+    .filters {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .filter-btn {
+      background: var(--dark-light);
+      border: none;
+      color: var(--light);
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .filter-btn.active {
+      background: var(--primary);
+    }
+
+    .movie-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .movie-card {
+      background: var(--dark-light);
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+      position: relative;
+    }
+
+    .movie-card:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+    }
+
+    .movie-poster {
+      width: 100%;
+      height: 280px;
+      object-fit: cover;
+    }
+
+    .movie-info {
+      padding: 15px;
+    }
+
+    .movie-title {
+      font-size: 16px;
+      margin-bottom: 8px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .movie-meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 14px;
+      color: var(--gray);
+      margin-bottom: 12px;
+    }
+
+    .download-btn {
+      display: block;
+      width: 100%;
+      padding: 10px;
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: background 0.3s;
+      text-align: center;
+      text-decoration: none;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .download-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+      transition: left 0.5s;
+    }
+
+    .download-btn:hover::before {
+      left: 100%;
+    }
+
+    .download-btn:hover {
+      background: var(--primary-dark);
+    }
+
+    .quality-badge {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: var(--success);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 4px;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    /* Footer */
+    footer {
+      background: var(--dark-light);
+      padding: 40px 0;
+      border-top: 1px solid var(--gray-dark);
+    }
+
+    .footer-content {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 30px;
+    }
+
+    .footer-column h4 {
+      font-size: 18px;
+      margin-bottom: 20px;
+      color: var(--primary);
+    }
+
+    .footer-links {
+      list-style: none;
+    }
+
+    .footer-links li {
+      margin-bottom: 10px;
+    }
+
+    .footer-links a {
+      color: var(--gray);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .footer-links a:hover {
+      color: var(--light);
+    }
+
+    .copyright {
+      text-align: center;
+      margin-top: 40px;
+      padding-top: 20px;
+      border-top: 1px solid var(--gray-dark);
+      color: var(--gray);
+    }
+
+    /* Download Modal */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.8);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-content {
+      background: var(--dark-light);
+      border-radius: 12px;
+      padding: 30px;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+    }
+
+    .modal h3 {
+      margin-bottom: 20px;
+      color: var(--primary);
+    }
+
+    .download-options {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin: 20px 0;
+    }
+
+    .download-option {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 12px;
+      background: var(--dark);
+      border-radius: 8px;
+    }
+
+    .download-option span {
+      font-weight: 500;
+    }
+
+    .close-modal {
+      background: var(--gray-dark);
+      color: var(--light);
+      border: none;
+      padding: 10px 20px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+      
+      .footer-content {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .header-content {
+        flex-direction: column;
+        gap: 20px;
+      }
+      
+      .nav-links {
+        gap: 15px;
+      }
+      
+      .movie-grid {
+        grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+      }
+    }
+
+    @media (max-width: 576px) {
+      .footer-content {
+        grid-template-columns: 1fr;
+      }
+      
+      .filters {
+        justify-content: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="container">
+      <div class="header-content">
+        <div class="logo">
+          <div class="logo-icon">MH</div>
+          <div class="logo-text">MovieHub</div>
+        </div>
+        
+        <nav class="nav-links">
+          <a href="#" class="active">Home</a>
+          <a href="#">Movies</a>
+          <a href="#">TV Shows</a>
+          <a href="#">New Releases</a>
+          <a href="#">My Library</a>
+        </nav>
+        
+        <div class="search-box">
+          <input type="text" placeholder="Search movies...">
+          <button>🔍</button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="hero">
+    <div class="container">
+      <h1>Download HD Movies & Pictures</h1>
+      <p>Access thousands of movies in high quality. Fast downloads, no ads, unlimited access to your favorite content.</p>
+      <a href="#" class="download-btn" style="width: auto; display: inline-block; padding: 12px 30px;">Explore Now</a>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <div class="container">
+    <div class="main-content">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-section">
+          <h3>Categories</h3>
+          <ul class="category-list">
+            <li><a href="#"><span class="category-icon">🎬</span> Action</a></li>
+            <li><a href="#"><span class="category-icon">😄</span> Comedy</a></li>
+            <li><a href="#"><span class="category-icon">💖</span> Romance</a></li>
+            <li><a href="#"><span class="category-icon">👻</span> Horror</a></li>
+            <li><a href="#"><span class="category-icon">🚀</span> Sci-Fi</a></li>
+            <li><a href="#"><span class="category-icon">🕵️</span> Mystery</a></li>
+            <li><a href="#"><span class="category-icon">🎭</span> Drama</a></li>
+            <li><a href="#"><span class="category-icon">🧙</span> Fantasy</a></li>
+          </ul>
+        </div>
+        
+        <div class="sidebar-section">
+          <h3>Top Downloads</h3>
+          <ul class="category-list">
+            <li><a href="#"><span class="category-icon">🔥</span> Trending Now</a></li>
+            <li><a href="#"><span class="category-icon">⭐</span> Highest Rated</a></li>
+            <li><a href="#"><span class="category-icon">🆕</span> Recently Added</a></li>
+            <li><a href="#"><span class="category-icon">💯</span> Most Popular</a></li>
+          </ul>
+        </div>
+        
+        <div class="sidebar-section">
+          <h3>Quality</h3>
+          <ul class="category-list">
+            <li><a href="#"><span class="category-icon">💎</span> 4K Ultra HD</a></li>
+            <li><a href="#"><span class="category-icon">🔥</span> 1080p Full HD</a></li>
+            <li><a href="#"><span class="category-icon">👍</span> 720p HD</a></li>
+            <li><a href="#"><span class="category-icon">📱</span> 480p SD</a></li>
+          </ul>
+        </div>
+      </aside>
+
+      <!-- Movie Content -->
+      <main>
+        <h2 class="section-title">Featured Movies</h2>
+        
+        <div class="filters">
+          <button class="filter-btn active">All</button>
+          <button class="filter-btn">Action</button>
+          <button class="filter-btn">Comedy</button>
+          <button class="filter-btn">Drama</button>
+          <button class="filter-btn">Horror</button>
+          <button class="filter-btn">Sci-Fi</button>
+        </div>
+        
+        <div class="movie-grid">
+          <!-- Movie 1 -->
+          <div class="movie-card">
+            <div class="quality-badge">4K</div>
+            <img src="https://images.unsplash.com/photo-1635805737707-575885ab0820?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Movie Poster" class="movie-poster">
+            <div class="movie-info">
+              <h3 class="movie-title">Spider-Man: No Way Home</h3>
+              <div class="movie-meta">
+                <span>2021</span>
+                <span>Action</span>
+              </div>
+              <button class="download-btn" data-movie="Spider-Man: No Way Home">Download</button>
+            </div>
+          </div>
+          
+          <!-- Movie 2 -->
+          <div class="movie-card">
+            <div class="quality-badge">HD</div>
+            <img src="https://images.unsplash.com/photo-1534447677768-be436bb09401?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Movie Poster" class="movie-poster">
+            <div class="movie-info">
+              <h3 class="movie-title">Avengers: Endgame</h3>
+              <div class="movie-meta">
+                <span>2019</span>
+                <span>Action</span>
+              </div>
+              <button class="download-btn" data-movie="Avengers: Endgame">Download</button>
+            </div>
+          </div>
+          
+          <!-- Movie 3 -->
+          <div class="movie-card">
+            <div class="quality-badge">HD</div>
+            <img src="https://images.unsplash.com/photo-1485846234645-a62644f84728?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Movie Poster" class="movie-poster">
+            <div class="movie-info">
+              <h3 class="movie-title">John Wick: Chapter 4</h3>
+              <div class="movie-meta">
+                <span>2023</span>
+                <span>Action</span>
+              </div>
+              <button class="download-btn" data-movie="John Wick: Chapter 4">Download</button>
+            </div>
+          </div>
+          
+          <!-- Movie 4 -->
+          <div class="movie-card">
+            <div class="quality-badge">4K</div>
+            <img src="https://images.unsplash.com/photo-1594909122845-11baa439b7bf?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Movie Poster" class="movie-poster">
+            <div class="movie-info">
+              <h3 class="movie-title">The Batman</h3>
+              <div class="movie-meta">
+                <span>2022</span>
+                <span>Action</span>
+              </div>
+              <button class="download-btn" data-movie="The Batman">Download</button>
+            </div>
+          </div>
+          
+          <!-- Movie 5 -->
+          <div class="movie-card">
+            <div class="quality-badge">HD</div>
+            <img src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Movie Poster" class="movie-poster">
+            <div class="movie-info">
+              <h3 class="movie-title">Black Panther</h3>
+              <div class="movie-meta">
+                <span>2018</span>
+                <span>Action</span>
+              </div>
+              <button class="download-btn" data-movie="Black Panther">Download</button>
+            </div>
+          </div>
+          
+          <!-- Movie 6 -->
+          <div class="movie-card">
+            <div class="quality-badge">4K</div>
+            <img src="https://images.unsplash.com/photo-1590179068383-b9c69aacebd3?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Movie Poster" class="movie-poster">
+            <div class="movie-info">
+              <h3 class="movie-title">Stranger Things</h3>
+              <div class="movie-meta">
+                <span>2016</span>
+                <span>Horror</span>
+              </div>
+              <button class="download-btn" data-movie="Stranger Things">Download</button>
+            </div>
+          </div>
+        </div>
+        
+        <h2 class="section-title" style="margin-top: 40px;">Movie Pictures & Posters</h2>
+        
+        <div class="movie-grid">
+          <!-- Picture 1 -->
+          <div class="movie-card">
+            <img src="https://images.unsplash.com/photo-1585951237318-9ea5e175b891?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Movie Picture" class="movie-poster">
+            <div class="movie-info">
+              <h3 class="movie-title">Avengers Cast Photo</h3>
+              <div class="movie-meta">
+                <span>2020</span>
+                <span>Cast</span>
+              </div>
+              <button class="download-btn" data-movie="Avengers Cast Photo">Download</button>
+            </div>
+          </div>
+          
+          <!-- Picture 2 -->
+          <div class="movie-card">
+            <img src="https://images.unsplash.com/photo-1560169897-fc0cdbdfa4d5?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Movie Picture" class="movie-poster">
+            <div class="movie-info">
+              <h3 class="movie-title">Wonder Woman Poster</h3>
+              <div class="movie-meta">
+                <span>2020</span>
+                <span>Poster</span>
+              </div>
+              <button class="download-btn" data-movie="Wonder Woman Poster">Download</button>
+            </div>
+          </div>
+          
+          <!-- Picture 3 -->
+          <div class="movie-card">
+            <img src="https://images.unsplash.com/photo-1518709268805-4e9042af2176?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Movie Picture" class="movie-poster">
+            <div class="movie-info">
+              <h3 class="movie-title">Spider-Man Wallpaper</h3>
+              <div class="movie-meta">
+                <span>2021</span>
+                <span>Wallpaper</span>
+              </div>
+              <button class="download-btn" data-movie="Spider-Man Wallpaper">Download</button>
+            </div>
+          </div>
+          
+          <!-- Picture 4 -->
+          <div class="movie-card">
+            <img src="https://images.unsplash.com/photo-1536440136628-849c177e76a1?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Movie Picture" class="movie-poster">
+            <div class="movie-info">
+              <h3 class="movie-title">Cinema Collection</h3>
+              <div class="movie-meta">
+                <span>2022</span>
+                <span>Collection</span>
+              </div>
+              <button class="download-btn" data-movie="Cinema Collection">Download</button>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Download Modal -->
+  <div class="modal" id="downloadModal">
+    <div class="modal-content">
+      <h3>Download Options</h3>
+      <p id="selectedMovie">Select a download quality for: <span id="movieName"></span></p>
+      <div class="download-options">
+        <div class="download-option">
+          <span>4K Ultra HD (4GB)</span>
+          <button class="download-btn" data-quality="4K">Download</button>
+        </div>
+        <div class="download-option">
+          <span>1080p Full HD (2GB)</span>
+          <button class="download-btn" data-quality="1080p">Download</button>
+        </div>
+        <div class="download-option">
+          <span>720p HD (1GB)</span>
+          <button class="download-btn" data-quality="720p">Download</button>
+        </div>
+        <div class="download-option">
+          <span>480p SD (500MB)</span>
+          <button class="download-btn" data-quality="480p">Download</button>
+        </div>
+      </div>
+      <button class="close-modal" id="closeModal">Close</button>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-column">
+          <h4>MovieHub</h4>
+          <ul class="footer-links">
+            <li><a href="#">About Us</a></li>
+            <li><a href="#">Contact</a></li>
+            <li><a href="#">FAQ</a></li>
+            <li><a href="#">Privacy Policy</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-column">
+          <h4>Browse</h4>
+          <ul class="footer-links">
+            <li><a href="#">Movies</a></li>
+            <li><a href="#">TV Shows</a></li>
+            <li><a href="#">Genres</a></li>
+            <li><a href="#">Top Downloads</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-column">
+          <h4>Account</h4>
+          <ul class="footer-links">
+            <li><a href="#">My Library</a></li>
+            <li><a href="#">Download History</a></li>
+            <li><a href="#">Settings</a></li>
+            <li><a href="#">Help Center</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-column">
+          <h4>Legal</h4>
+          <ul class="footer-links">
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Copyright</a></li>
+            <li><a href="#">DMCA</a></li>
+            <li><a href="#">Compliance</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="copyright">
+        <p>&copy; 2023 MovieHub. All rights reserved. Download content you own or have rights to.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Add shine effect to all download buttons on hover
+    document.querySelectorAll('.download-btn').forEach(button => {
+      button.addEventListener('mouseenter', function() {
+        this.style.transform = 'scale(1.05)';
+      });
+      
+      button.addEventListener('mouseleave', function() {
+        this.style.transform = 'scale(1)';
+      });
+    });
+
+    // Filter functionality
+    document.querySelectorAll('.filter-btn').forEach(button => {
+      button.addEventListener('click', function() {
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+          btn.classList.remove('active');
+        });
+        this.classList.add('active');
+        
+        // In a real app, this would filter the movie grid
+        // For this demo, we'll just show an alert
+        alert(`Filtering by: ${this.textContent}`);
+      });
+    });
+
+    // Search functionality
+    document.querySelector('.search-box button').addEventListener('click', function() {
+      const searchTerm = document.querySelector('.search-box input').value;
+      if (searchTerm) {
+        alert(`Searching for: ${searchTerm}`);
+      }
+    });
+
+    // Download functionality
+    const downloadModal = document.getElementById('downloadModal');
+    const movieNameElement = document.getElementById('movieName');
+    const closeModal = document.getElementById('closeModal');
+    let currentMovie = '';
+
+    // Open download modal when download button is clicked
+    document.querySelectorAll('.movie-card .download-btn').forEach(button => {
+      button.addEventListener('click', function() {
+        currentMovie = this.getAttribute('data-movie');
+        movieNameElement.textContent = currentMovie;
+        downloadModal.style.display = 'flex';
+      });
+    });
+
+    // Close modal
+    closeModal.addEventListener('click', function() {
+      downloadModal.style.display = 'none';
+    });
+
+    // Download file when quality is selected
+    document.querySelectorAll('.download-options .download-btn').forEach(button => {
+      button.addEventListener('click', function() {
+        const quality = this.getAttribute('data-quality');
+        downloadFile(currentMovie, quality);
+        downloadModal.style.display = 'none';
+      });
+    });
+
+    // Function to simulate file download
+    function downloadFile(movieName, quality) {
+      // Create a fake download link
+      const link = document.createElement('a');
+      link.href = '#'; // In a real app, this would be the actual file URL
+      link.download = `${movieName} - ${quality}.mp4`;
+      
+      // Show download confirmation
+      alert(`Starting download: ${movieName} in ${quality} quality\n\nNote: This is a demo. In a real application, the file would download now.`);
+      
+      // In a real application, you would trigger the actual download here
+      // For this demo, we'll just log to console
+      console.log(`Downloading: ${movieName} in ${quality} quality`);
+    }
+  </script>
+</body>
+</html>
