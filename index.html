@@ -574,17 +574,17 @@
         </div>
         
         <div class="movie-grid">
-          <!-- Movie 1 -->
+          <!-- Movie 1 (mapped to your Monkey King Drive file) -->
           <div class="movie-card">
             <div class="quality-badge">4K</div>
-            <img src="https://images.unsplash.com/photo-1635805737707-575885ab0820?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Movie Poster" class="movie-poster">
+            <img src="https://images.unsplash.com/photo-1635805737707-575885ab0820?ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="Monkey King Poster" class="movie-poster">
             <div class="movie-info">
-              <h3 class="movie-title">Spider-Man: No Way Home</h3>
+              <h3 class="movie-title">Monkey King</h3>
               <div class="movie-meta">
-                <span>2021</span>
+                <span>2024</span>
                 <span>Action</span>
               </div>
-              <button class="download-btn" data-movie="Spider-Man: No Way Home">Download</button>
+              <button class="download-btn download-trigger" data-movie="Monkey King">Download</button>
             </div>
           </div>
           
@@ -598,7 +598,7 @@
                 <span>2019</span>
                 <span>Action</span>
               </div>
-              <button class="download-btn" data-movie="Avengers: Endgame">Download</button>
+              <button class="download-btn download-trigger" data-movie="Avengers: Endgame">Download</button>
             </div>
           </div>
           
@@ -612,7 +612,7 @@
                 <span>2023</span>
                 <span>Action</span>
               </div>
-              <button class="download-btn" data-movie="John Wick: Chapter 4">Download</button>
+              <button class="download-btn download-trigger" data-movie="John Wick: Chapter 4">Download</button>
             </div>
           </div>
           
@@ -626,7 +626,7 @@
                 <span>2022</span>
                 <span>Action</span>
               </div>
-              <button class="download-btn" data-movie="The Batman">Download</button>
+              <button class="download-btn download-trigger" data-movie="The Batman">Download</button>
             </div>
           </div>
           
@@ -640,7 +640,7 @@
                 <span>2018</span>
                 <span>Action</span>
               </div>
-              <button class="download-btn" data-movie="Black Panther">Download</button>
+              <button class="download-btn download-trigger" data-movie="Black Panther">Download</button>
             </div>
           </div>
           
@@ -654,7 +654,7 @@
                 <span>2016</span>
                 <span>Horror</span>
               </div>
-              <button class="download-btn" data-movie="Stranger Things">Download</button>
+              <button class="download-btn download-trigger" data-movie="Stranger Things">Download</button>
             </div>
           </div>
         </div>
@@ -671,7 +671,7 @@
                 <span>2020</span>
                 <span>Cast</span>
               </div>
-              <button class="download-btn" data-movie="Avengers Cast Photo">Download</button>
+              <button class="download-btn download-trigger" data-movie="Avengers Cast Photo">Download</button>
             </div>
           </div>
           
@@ -684,7 +684,7 @@
                 <span>2020</span>
                 <span>Poster</span>
               </div>
-              <button class="download-btn" data-movie="Wonder Woman Poster">Download</button>
+              <button class="download-btn download-trigger" data-movie="Wonder Woman Poster">Download</button>
             </div>
           </div>
           
@@ -697,7 +697,7 @@
                 <span>2021</span>
                 <span>Wallpaper</span>
               </div>
-              <button class="download-btn" data-movie="Spider-Man Wallpaper">Download</button>
+              <button class="download-btn download-trigger" data-movie="Spider-Man Wallpaper">Download</button>
             </div>
           </div>
           
@@ -710,7 +710,7 @@
                 <span>2022</span>
                 <span>Collection</span>
               </div>
-              <button class="download-btn" data-movie="Cinema Collection">Download</button>
+              <button class="download-btn download-trigger" data-movie="Cinema Collection">Download</button>
             </div>
           </div>
         </div>
@@ -773,19 +773,19 @@
       <div class="download-options">
         <div class="download-option">
           <span>4K Ultra HD (2160p)</span>
-          <button class="download-btn" style="width: auto; padding: 8px 16px;">Download</button>
+          <a class="download-btn download-action" href="#" data-quality="4K" data-href="#">Download</a>
         </div>
         <div class="download-option">
           <span>1080p Full HD</span>
-          <button class="download-btn" style="width: auto; padding: 8px 16px;">Download</button>
+          <a class="download-btn download-action" href="#" data-quality="1080p" data-href="#">Download</a>
         </div>
         <div class="download-option">
           <span>720p HD</span>
-          <button class="download-btn" style="width: auto; padding: 8px 16px;">Download</button>
+          <a class="download-btn download-action" href="#" data-quality="720p" data-href="#">Download</a>
         </div>
         <div class="download-option">
           <span>480p SD</span>
-          <button class="download-btn" style="width: auto; padding: 8px 16px;">Download</button>
+          <a class="download-btn download-action" href="#" data-quality="480p" data-href="#">Download</a>
         </div>
       </div>
       <button class="close-modal" onclick="closeModal()">Close</button>
@@ -793,33 +793,73 @@
   </div>
 
   <script>
-    // Modal functionality
-    const downloadButtons = document.querySelectorAll('.download-btn');
+    // --- DOWNLOAD MAP: map slug -> quality -> direct URL (Monkey King file provided) ---
+    const downloadMap = {
+      'monkey-king': {
+        '4K':  'https://drive.google.com/uc?export=download&id=1WDO0T6EQgksggqb_fJw-9KpRbzbQUzW2',
+        '1080p':'https://drive.google.com/uc?export=download&id=1WDO0T6EQgksggqb_fJw-9KpRbzbQUzW2',
+        '720p': 'https://drive.google.com/uc?export=download&id=1WDO0T6EQgksggqb_fJw-9KpRbzbQUzW2',
+        '480p': 'https://drive.google.com/uc?export=download&id=1WDO0T6EQgksggqb_fJw-9KpRbzbQUzW2'
+      }
+    };
+
+    // Selectors
+    const movieButtons = document.querySelectorAll('.download-trigger');
     const modal = document.getElementById('downloadModal');
     const movieNameSpan = document.getElementById('movieName');
-    
-    downloadButtons.forEach(button => {
-      button.addEventListener('click', function() {
-        const movieName = this.getAttribute('data-movie');
+    const modalDownloadLinks = modal.querySelectorAll('.download-action');
+
+    function slugify(text) {
+      return String(text).toLowerCase().trim()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)+/g, '');
+    }
+
+    // When user clicks a movie's Download button: open modal and set links from downloadMap
+    movieButtons.forEach(btn => {
+      btn.addEventListener('click', function(e) {
+        const movieName = this.dataset.movie || 'Unknown';
         movieNameSpan.textContent = movieName;
+        const slug = slugify(movieName);
+
+        modalDownloadLinks.forEach(link => {
+          const quality = link.dataset.quality || '';
+          const url = (downloadMap[slug] && downloadMap[slug][quality]) ? downloadMap[slug][quality] : '#';
+          link.dataset.href = url;
+          link.setAttribute('href', url === '#' ? '#' : url);
+          link.title = url === '#' ? 'Not configured' : `Download ${movieName} (${quality})`;
+        });
+
         modal.style.display = 'flex';
       });
     });
-    
+
+    // Close modal function
     function closeModal() {
       modal.style.display = 'none';
     }
-    
-    // Close modal when clicking outside
+
+    // Clicking outside modal closes it
     window.addEventListener('click', function(event) {
-      if (event.target === modal) {
-        closeModal();
-      }
+      if (event.target === modal) closeModal();
     });
-    
-    // Filter buttons functionality
+
+    // Handle clicks on modal download links
+    modalDownloadLinks.forEach(link => {
+      link.addEventListener('click', function(e) {
+        const url = this.dataset.href || this.getAttribute('href');
+        if (url && (url.startsWith('http://') || url.startsWith('https://'))) {
+          window.open(url, '_blank');
+        } else {
+          e.preventDefault();
+          alert('This download link is not configured. Replace the link\'s data-href with a real file URL.');
+        }
+        closeModal();
+      });
+    });
+
+    // Filter buttons functionality (visual only)
     const filterButtons = document.querySelectorAll('.filter-btn');
-    
     filterButtons.forEach(button => {
       button.addEventListener('click', function() {
         filterButtons.forEach(btn => btn.classList.remove('active'));
