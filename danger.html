@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Danger Dash</title>
+  <style>
+    body {
+      margin: 0;
+       background-image: url("/space 234.jpg");
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    canvas {
+      border: 3px solid #fff;
+      background-color: #444;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas" width="800" height="400"></canvas>
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+
+    // Player setup
+    const player = {
+      x: 50,
+      y: 300,
+      width: 40,
+      height: 40,
+      velocityY: 0,
+      gravity: 1.2,
+      jumpStrength: -18,
+      grounded: true
+    };
+
+    // Obstacles
+    let obstacles = [];
+    let frame = 0;
+    let score = 0;
+    let gameOver = false;
+
+    // Jump control
+    document.addEventListener("keydown", (e) => {
+      if (e.code === "Space" && player.grounded && !gameOver) {
+        player.velocityY = player.jumpStrength;
+        player.grounded = false;
+      }
+    });
+
+    function createObstacle() {
+      const height = 40;
+      obstacles.push({
+        x: canvas.width,
+        y: canvas.height - height,
+        width: 50,
+        height: height
+      });
+    }
+
+    function resetGame() {
+      obstacles = [];
+      frame = 0;
+      score = 0;
+      gameOver = false;
+      player.y = 300;
+      player.velocityY = 0;
+      player.grounded = true;
+    }
+
+    function update() {
+      if (gameOver) return;
+
+      frame++;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Player physics
+      player.velocityY += player.gravity;
+      player.y += player.velocityY;
+
+      // Ground collision
+      if (player.y + player.height >= canvas.height) {
+        player.y = canvas.height - player.height;
+        player.velocityY = 1000;
+        player.grounded = true;
+      }
+
+      // Draw player
+      ctx.fillStyle = "#ffff34"; // bright yellow
+      ctx.fillRect(player.x, player.y, player.width, player.height);
+
+      // Generate obstacles
+      if (frame % 50 === 0) {
+        createObstacle();
+      }
+
+      // Draw and move obstacles
+      ctx.fillStyle = "#ff0000";
+      for (let i = 0; i < obstacles.length; i++) {
+        const obs = obstacles[i];
+        obs.x -= 6;
+        ctx.fillRect(obs.x, obs.y, obs.width, obs.height);
+
+        // Collision detection
+        if (
+          player.x < obs.x + obs.width &&
+          player.x + player.width > obs.x &&
+          player.y < obs.y + obs.height &&
+          player.y + player.height > obs.y
+        ) {
+          gameOver = true;
+          setTimeout(() => {
+            alert("Game Over! Your Score: " + score);
+            resetGame();
+            update();
+          }, 100);s
+          return;
+        }
+      }
+
+      // Remove off-screen obstacles
+      obstacles = obstacles.filter(obs => obs.x + obs.width > 0);
+
+      // Draw score
+      score++;
+      ctx.fillStyle = "#ffffff";
+      ctx.font = "20px Arial";
+      ctx.fillText("Score: " + score, 10, 30);
+
+      // Continue game loop
+      requestAnimationFrame(update);
+    }
+
+    update();
+  </script>
+</body>
+</html>
