@@ -718,33 +718,6 @@
     </div>
   </div>
 
-  <!-- Download Modal -->
-  <div class="modal" id="downloadModal">
-    <div class="modal-content">
-      <h3>Download Options</h3>
-      <p id="selectedMovie">Select a download quality for: <span id="movieName"></span></p>
-      <div class="download-options">
-        <div class="download-option">
-          <span>4K Ultra HD (4GB)</span>
-          <button class="download-btn" data-quality="4K">Download</button>
-        </div>
-        <div class="download-option">
-          <span>1080p Full HD (2GB)</span>
-          <button class="download-btn" data-quality="1080p">Download</button>
-        </div>
-        <div class="download-option">
-          <span>720p HD (1GB)</span>
-          <button class="download-btn" data-quality="720p">Download</button>
-        </div>
-        <div class="download-option">
-          <span>480p SD (500MB)</span>
-          <button class="download-btn" data-quality="480p">Download</button>
-        </div>
-      </div>
-      <button class="close-modal" id="closeModal">Close</button>
-    </div>
-  </div>
-
   <!-- Footer -->
   <footer>
     <div class="container">
@@ -754,125 +727,105 @@
           <ul class="footer-links">
             <li><a href="#">About Us</a></li>
             <li><a href="#">Contact</a></li>
-            <li><a href="#">FAQ</a></li>
             <li><a href="#">Privacy Policy</a></li>
-          </ul>
-        </div>
-        
-        <div class="footer-column">
-          <h4>Browse</h4>
-          <ul class="footer-links">
-            <li><a href="#">Movies</a></li>
-            <li><a href="#">TV Shows</a></li>
-            <li><a href="#">Genres</a></li>
-            <li><a href="#">Top Downloads</a></li>
-          </ul>
-        </div>
-        
-        <div class="footer-column">
-          <h4>Account</h4>
-          <ul class="footer-links">
-            <li><a href="#">My Library</a></li>
-            <li><a href="#">Download History</a></li>
-            <li><a href="#">Settings</a></li>
-            <li><a href="#">Help Center</a></li>
-          </ul>
-        </div>
-        
-        <div class="footer-column">
-          <h4>Legal</h4>
-          <ul class="footer-links">
             <li><a href="#">Terms of Service</a></li>
-            <li><a href="#">Copyright</a></li>
-            <li><a href="#">DMCA</a></li>
-            <li><a href="#">Compliance</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4>Categories</h4>
+          <ul class="footer-links">
+            <li><a href="#">Action</a></li>
+            <li><a href="#">Comedy</a></li>
+            <li><a href="#">Drama</a></li>
+            <li><a href="#">Horror</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4>Support</h4>
+          <ul class="footer-links">
+            <li><a href="#">Help Center</a></li>
+            <li><a href="#">FAQ</a></li>
+            <li><a href="#">Download Guide</a></li>
+            <li><a href="#">System Requirements</a></li>
+          </ul>
+        </div>
+        <div class="footer-column">
+          <h4>Connect</h4>
+          <ul class="footer-links">
+            <li><a href="#">Facebook</a></li>
+            <li><a href="#">Twitter</a></li>
+            <li><a href="#">Instagram</a></li>
+            <li><a href="#">YouTube</a></li>
           </ul>
         </div>
       </div>
-      
       <div class="copyright">
-        <p>&copy; 2023 MovieHub. All rights reserved. Download content you own or have rights to.</p>
+        <p>&copy; 2024 MovieHub. All rights reserved.</p>
       </div>
     </div>
   </footer>
 
+  <!-- Download Modal -->
+  <div class="modal" id="downloadModal">
+    <div class="modal-content">
+      <h3>Download Options</h3>
+      <p>Select a download quality for: <span id="movieName"></span></p>
+      <div class="download-options">
+        <div class="download-option">
+          <span>4K Ultra HD (2160p)</span>
+          <button class="download-btn" style="width: auto; padding: 8px 16px;">Download</button>
+        </div>
+        <div class="download-option">
+          <span>1080p Full HD</span>
+          <button class="download-btn" style="width: auto; padding: 8px 16px;">Download</button>
+        </div>
+        <div class="download-option">
+          <span>720p HD</span>
+          <button class="download-btn" style="width: auto; padding: 8px 16px;">Download</button>
+        </div>
+        <div class="download-option">
+          <span>480p SD</span>
+          <button class="download-btn" style="width: auto; padding: 8px 16px;">Download</button>
+        </div>
+      </div>
+      <button class="close-modal" onclick="closeModal()">Close</button>
+    </div>
+  </div>
+
   <script>
-    // Add shine effect to all download buttons on hover
-    document.querySelectorAll('.download-btn').forEach(button => {
-      button.addEventListener('mouseenter', function() {
-        this.style.transform = 'scale(1.05)';
-      });
-      
-      button.addEventListener('mouseleave', function() {
-        this.style.transform = 'scale(1)';
-      });
-    });
-
-    // Filter functionality
-    document.querySelectorAll('.filter-btn').forEach(button => {
+    // Modal functionality
+    const downloadButtons = document.querySelectorAll('.download-btn');
+    const modal = document.getElementById('downloadModal');
+    const movieNameSpan = document.getElementById('movieName');
+    
+    downloadButtons.forEach(button => {
       button.addEventListener('click', function() {
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-          btn.classList.remove('active');
-        });
-        this.classList.add('active');
-        
-        // In a real app, this would filter the movie grid
-        // For this demo, we'll just show an alert
-        alert(`Filtering by: ${this.textContent}`);
+        const movieName = this.getAttribute('data-movie');
+        movieNameSpan.textContent = movieName;
+        modal.style.display = 'flex';
       });
     });
-
-    // Search functionality
-    document.querySelector('.search-box button').addEventListener('click', function() {
-      const searchTerm = document.querySelector('.search-box input').value;
-      if (searchTerm) {
-        alert(`Searching for: ${searchTerm}`);
+    
+    function closeModal() {
+      modal.style.display = 'none';
+    }
+    
+    // Close modal when clicking outside
+    window.addEventListener('click', function(event) {
+      if (event.target === modal) {
+        closeModal();
       }
     });
-
-    // Download functionality
-    const downloadModal = document.getElementById('downloadModal');
-    const movieNameElement = document.getElementById('movieName');
-    const closeModal = document.getElementById('closeModal');
-    let currentMovie = '';
-
-    // Open download modal when download button is clicked
-    document.querySelectorAll('.movie-card .download-btn').forEach(button => {
+    
+    // Filter buttons functionality
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    
+    filterButtons.forEach(button => {
       button.addEventListener('click', function() {
-        currentMovie = this.getAttribute('data-movie');
-        movieNameElement.textContent = currentMovie;
-        downloadModal.style.display = 'flex';
+        filterButtons.forEach(btn => btn.classList.remove('active'));
+        this.classList.add('active');
       });
     });
-
-    // Close modal
-    closeModal.addEventListener('click', function() {
-      downloadModal.style.display = 'none';
-    });
-
-    // Download file when quality is selected
-    document.querySelectorAll('.download-options .download-btn').forEach(button => {
-      button.addEventListener('click', function() {
-        const quality = this.getAttribute('data-quality');
-        downloadFile(currentMovie, quality);
-        downloadModal.style.display = 'none';
-      });
-    });
-
-    // Function to simulate file download
-    function downloadFile(movieName, quality) {
-      // Create a fake download link
-      const link = document.createElement('a');
-      link.href = '#'; // In a real app, this would be the actual file URL
-      link.download = `${movieName} - ${quality}.mp4`;
-      
-      // Show download confirmation
-      alert(`Starting download: ${movieName} in ${quality} quality\n\nNote: This is a demo. In a real application, the file would download now.`);
-      
-      // In a real application, you would trigger the actual download here
-      // For this demo, we'll just log to console
-      console.log(`Downloading: ${movieName} in ${quality} quality`);
-    }
   </script>
 </body>
 </html>
